@@ -1,11 +1,14 @@
-class PhoneBase:
-    """
-    把手機的共同 member 抽象化成介面，其餘各款手機繼承後實作 methods
-    """
+import abc
 
-    def __init__(self):
-        pass
 
+class PhoneBase(metaclass=abc.ABCMeta):
+
+    def __init__(self, price, camera_count, screen_size):
+        self.price = price
+        self.camera_count = camera_count
+        self.screen_size = screen_size
+
+    @abc.abstractmethod
     def special_feature(self):
         pass
 
@@ -13,25 +16,19 @@ class PhoneBase:
 class GooglePhone(PhoneBase):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(price=10, camera_count=3, screen_size=5)
 
     def special_feature(self, nums):
-        """
-        - input: list of int
-
-        - output: list of int
-
-        - determine num is even and > 10
-
-        - descending order
-            use sorted(reverse=True)
-        """
+        return sorted(
+            [num for num in nums if num > 10 and num % 2 == 0],
+            reverse=True,
+        )
 
 
 class TaiwanPhone(PhoneBase):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(price=20, camera_count=1, screen_size=3)
 
     def special_feature(self, num):
         """
@@ -61,3 +58,25 @@ class TaiwanPhone(PhoneBase):
             - x 的階乘取前 3 位
         """
         pass
+
+
+if __name__ == '__main__':
+    from unittest import TestCase
+
+    google_phone = GooglePhone()
+    taiwan_phone = TaiwanPhone()
+
+    # test GooglePhone
+    assert google_phone.price == 10
+    assert google_phone.camera_count == 3
+    assert google_phone.screen_size == 5
+
+    TestCase().assertListEqual(
+        google_phone.special_feature([3, 43, 62, 15, 18, 22]),
+        [62, 22, 18],
+    )
+
+    # test TaiwanPhone
+    assert taiwan_phone.price == 20
+    assert taiwan_phone.camera_count == 1
+    assert taiwan_phone.screen_size == 3
