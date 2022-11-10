@@ -1,5 +1,11 @@
 import abc
 
+from utils import (
+    fib_of,
+    to_digits,
+    permutate,
+)
+
 
 class PhoneBase(metaclass=abc.ABCMeta):
 
@@ -31,45 +37,21 @@ class TaiwanPhone(PhoneBase):
         super().__init__(price=20, camera_count=1, screen_size=3)
 
     def special_feature(self, num):
-        """
-        - input: int
+        fib_num = fib_of(num)
+        y, x, *_ = to_digits(fib_num)
 
-        - output: int
-
-        - fibonacci
-            e.g. 0, 1, 1, 2, 3, 5, ...
-
-            - use cache
-            - base case: 0, 1
-            - iterate over [2, n]
-
-        - split digit
-            e.g. 152, x = 5, y = 2
-
-            - return list: [個位, 十位, 百位, ...]
-            - mod 10 取餘數 then 取商繼續 mod
-                152 % 10 = 2 append
-                15 % 10 = 5 append
-                ...
-
-        - permutate
-            e.g. P(5 取 3), 5 * 4 * 3 = 60
-
-            - x 的階乘取前 3 位
-        """
-        pass
+        return permutate(x, y)
 
 
 if __name__ == '__main__':
-    from unittest import TestCase
-
-    google_phone = GooglePhone()
-    taiwan_phone = TaiwanPhone()
-
     # test GooglePhone
+    google_phone = GooglePhone()
+
     assert google_phone.price == 10
     assert google_phone.camera_count == 3
     assert google_phone.screen_size == 5
+
+    from unittest import TestCase
 
     TestCase().assertListEqual(
         google_phone.special_feature([3, 43, 62, 15, 18, 22]),
@@ -77,6 +59,11 @@ if __name__ == '__main__':
     )
 
     # test TaiwanPhone
+    taiwan_phone = TaiwanPhone()
+
     assert taiwan_phone.price == 20
     assert taiwan_phone.camera_count == 1
     assert taiwan_phone.screen_size == 3
+
+    assert taiwan_phone.special_feature(10) == 120
+    assert taiwan_phone.special_feature(12) == 24
