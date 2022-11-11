@@ -88,9 +88,9 @@ class CsvHanlder:
             median = round(st.median(frequency_list), 5)
             mode = round(st.mode(frequency_list), 5)
 
-            print(f'算術平均數: {mean}')
-            print(f'中位數:{median}')
-            print(f'眾數: {mode}')
+            print(f'算術平均數: {mean:.5f}')
+            print(f'中位數: {median:.5f}')
+            print(f'眾數: {mode:.5f}')
 
     @ staticmethod
     def _random_id(length=8):
