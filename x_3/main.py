@@ -1,13 +1,20 @@
+import os
+
+FOLDER_NAME = 'ilovecoffee'
+
+
 class CsvHanlder:
 
     def __init__(self):
-        """
-        1. create ilovecoffee folder
-            - 要在相同目錄
-                path join(cwd, 'ilovecoffee')
-            - 有，略過
-            - 無，建立
-        """
+        current_folder = os.path.dirname(__file__)
+        base_dir = os.path.abspath(current_folder)
+
+        folder_path = os.path.join(base_dir, FOLDER_NAME)
+
+        try:
+            os.mkdir(folder_path)
+        except FileExistsError:
+            pass
 
     def create_csv(self):
         """
@@ -76,3 +83,7 @@ class CsvHanlder:
         1. random module
             randint(min, max)
         """
+
+
+if __name__ == '__main__':
+    c = CsvHanlder()
