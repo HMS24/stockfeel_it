@@ -2,6 +2,7 @@ import os
 import string
 import random
 import csv
+import statistics
 
 
 LETTERS = string.ascii_letters
@@ -55,16 +56,21 @@ class CsvHanlder:
             writer.writerows(customers)
 
     def calculate_csv(self):
-        """
-        1. csv module + context
-            - dictreader
-            - prepare rows
-            - statistics module compute mean, median and mode
-            - 小數點後 5 位
-                - round() 浮點數不太精確
-                - Decimal object
-                frequency 不是需要精確計算的欄位，用 round 簡單
-        """
+        with open(self.file_path, 'r', newline='') as f:
+            reader = csv.DictReader(f, delimiter=',')
+
+            customer_frequency_list = [
+                int(row['frequency']) for row in reader
+            ]
+
+            # use round(), 假設 frequency 的統計數字可以不用太精準
+            mean = round(statistics.mean(customer_frequency_list), 5)
+            median = round(statistics.median(customer_frequency_list), 5)
+            mode = round(statistics.mode(customer_frequency_list), 5)
+
+            print(f'算術平均數: {mean}')
+            print(f'中位數:{median}')
+            print(f'眾數: {mode}')
 
     @staticmethod
     def _random_id(length=8):
@@ -103,3 +109,4 @@ class CsvHanlder:
 if __name__ == '__main__':
     c = CsvHanlder()
     c.create_csv()
+    c.calculate_csv()
