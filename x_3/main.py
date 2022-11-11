@@ -127,5 +127,5 @@ class CsvHanlder:
 
 if __name__ == '__main__':
     c = CsvHanlder()
-    c.create_csv()
-    c.calculate_csv()
+    # c.create_csv()
+    # c.calculate_csv()
