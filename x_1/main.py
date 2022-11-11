@@ -38,9 +38,9 @@ class TaiwanPhone(PhoneBase):
 
     def special_feature(self, num):
         fib_num = fib_of(num)
-        y, x, *_ = to_digits(fib_num)
+        units_digit, tens_digit, *_ = to_digits(fib_num)
 
-        return permutate(x, y)
+        return permutate(tens_digit, units_digit)
 
 
 if __name__ == '__main__':
