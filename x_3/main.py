@@ -1,15 +1,28 @@
 import os
+import string
+import random
 
-FOLDER_NAME = 'ilovecoffee'
+
+LETTERS = string.ascii_letters
+DIGITS = string.digits
+LETTERS_AND_DIGITS = LETTERS + DIGITS
 
 
 class CsvHanlder:
 
     def __init__(self):
+        self.folder_name = 'ilovecoffee'
+        self.names = [
+            'may', 'phoebe', 'hayden', 'faye', 'julia',
+            'kayla', 'joe', 'shawn', 'callie', 'rusty',
+        ]
+        self.mobile_suffix_created = set()
+
+        # todo: wrap
         current_folder = os.path.dirname(__file__)
         base_dir = os.path.abspath(current_folder)
 
-        folder_path = os.path.join(base_dir, FOLDER_NAME)
+        folder_path = os.path.join(base_dir, self.folder_name)
 
         try:
             os.mkdir(folder_path)
@@ -30,7 +43,8 @@ class CsvHanlder:
         2. csv module + context
             - write header
             - write rows
-        3. 如果存在 csv file 取代 or 插入 ??
+        3. clear set
+        4. 如果存在 csv file 取代 or 插入 ??
             先實作取代，比較簡單。
             插入但要不重複的 mobile number 可以用 schema unique constraint
         """
@@ -49,40 +63,36 @@ class CsvHanlder:
 
     @staticmethod
     def _random_id(length=8):
-        """
-        1. random module
-            - 從 [a-zA-Z] 挑 1 個
-            - 從 [a-zA-Z0-9] 挑 length - 1 個
-            - join 上述所挑選的
-        """
+        prefix = random.choice(LETTERS)
+        suffix = random.choices(LETTERS_AND_DIGITS, k=length-1)
 
-    def _random_name(self):
-        """
-        1. define names = [...]
-        2. random module
-            - 從 names 挑 1 個
-            - join(names, self.id)
-        """
+        return prefix + ''.join(suffix)
 
-    @staticmethod
-    def _random_taiwan_mobile():
-        """
-        1. 不能重複 use cache_set 
-        2. random module
-            - 從 [0-9] 挑 8 個 e.g. 09`12567891`
-            - 判斷前一 step 的數字 in cache_set
-                - 有，回到前一 step
-                - 沒有
-                    - join(+8869, random_num)
-                    - add random_num in set
-        """
+    def _random_name(self, id):
+        name = random.choice(self.names)
+
+        return f'{name}.{id}'
+
+    def _random_taiwan_mobile(self):
+        COUNTRY_LOCAL_CODE = '+8869'
+        SUFFIX_LENGTH = 8
+
+        mobile = ''
+
+        while (
+            not mobile
+            or suffix in self.mobile_suffix_created
+        ):
+            suffix = ''.join(random.choices(DIGITS, k=SUFFIX_LENGTH))
+            mobile = f'{COUNTRY_LOCAL_CODE}{suffix}'
+
+        self.mobile_suffix_created.add(suffix)
+
+        return mobile
 
     @staticmethod
     def _random_frequency(min=0, max=20):
-        """
-        1. random module
-            randint(min, max)
-        """
+        return random.randint(min, max)
 
 
 if __name__ == '__main__':
