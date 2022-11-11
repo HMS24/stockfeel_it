@@ -18,16 +18,7 @@ class CsvHanlder:
         ]
         self.mobile_suffix_created = set()
 
-        # todo: wrap
-        current_folder = os.path.dirname(__file__)
-        base_dir = os.path.abspath(current_folder)
-
-        folder_path = os.path.join(base_dir, self.folder_name)
-
-        try:
-            os.mkdir(folder_path)
-        except FileExistsError:
-            pass
+        self._create_folder(self.folder_name)
 
     def create_csv(self):
         """
@@ -60,6 +51,18 @@ class CsvHanlder:
                 - Decimal object 
                 frequency 不是需要精確計算的欄位，用 round 簡單
         """
+
+    @staticmethod
+    def _create_folder(name):
+        current_folder = os.path.dirname(__file__)
+        base_dir = os.path.abspath(current_folder)
+
+        folder_path = os.path.join(base_dir, name)
+
+        try:
+            os.mkdir(folder_path)
+        except FileExistsError:
+            pass
 
     @staticmethod
     def _random_id(length=8):
