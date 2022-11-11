@@ -1,6 +1,7 @@
 import os
 import string
 import random
+import csv
 
 
 LETTERS = string.ascii_letters
@@ -10,35 +11,48 @@ LETTERS_AND_DIGITS = LETTERS + DIGITS
 
 class CsvHanlder:
 
+    folder_name = 'ilovecoffee'
+    file_name = 'customers.csv'
+    names = [
+        'may', 'phoebe', 'hayden', 'faye', 'julia',
+        'kayla', 'joe', 'shawn', 'callie', 'rusty',
+    ]
+    fake_customers_count = 2
+
     def __init__(self):
-        self.folder_name = 'ilovecoffee'
-        self.names = [
-            'may', 'phoebe', 'hayden', 'faye', 'julia',
-            'kayla', 'joe', 'shawn', 'callie', 'rusty',
-        ]
+        current_dir = os.path.dirname(__file__)
+        base_dir = os.path.abspath(current_dir)
+
+        self.folder_path = os.path.join(base_dir, self.folder_name)
+        self.file_path = os.path.join(self.folder_path, self.file_name)
         self.mobile_suffix_created = set()
 
-        self._create_folder(self.folder_name)
+        try:
+            os.mkdir(self.folder_path)
+        except FileExistsError:
+            pass
 
     def create_csv(self):
-        """
-        1. generate customers
-            - use dataclasses 定義屬性 ??
-            - prepare fake_customers
-                tuple as row (
-                    customer_id: random_id(),
-                    customer_name: random_name(),
-                    customer_mobile: random_mobile(),
-                    frequency: random_frequency(),
-                )
-        2. csv module + context
-            - write header
-            - write rows
-        3. clear set
-        4. 如果存在 csv file 取代 or 插入 ??
-            先實作取代，比較簡單。
-            插入但要不重複的 mobile number 可以用 schema unique constraint
-        """
+        customers = []
+
+        for _ in range(self.fake_customers_count):
+            customer_id = self._random_id()
+
+            customers.append({
+                'customer_id': customer_id,
+                'customer_name': self._random_name(customer_id),
+                'customer_mobile': self._random_taiwan_mobile(),
+                'frequency': self._random_frequency(),
+            })
+
+        # 清掉判斷手機號碼的 cache
+        self.mobile_suffix_created.clear()
+
+        with open(self.file_path, 'w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=customers[0].keys())
+
+            writer.writeheader()
+            writer.writerows(customers)
 
     def calculate_csv(self):
         """
@@ -48,21 +62,9 @@ class CsvHanlder:
             - statistics module compute mean, median and mode
             - 小數點後 5 位
                 - round() 浮點數不太精確
-                - Decimal object 
+                - Decimal object
                 frequency 不是需要精確計算的欄位，用 round 簡單
         """
-
-    @staticmethod
-    def _create_folder(name):
-        current_folder = os.path.dirname(__file__)
-        base_dir = os.path.abspath(current_folder)
-
-        folder_path = os.path.join(base_dir, name)
-
-        try:
-            os.mkdir(folder_path)
-        except FileExistsError:
-            pass
 
     @staticmethod
     def _random_id(length=8):
@@ -100,3 +102,4 @@ class CsvHanlder:
 
 if __name__ == '__main__':
     c = CsvHanlder()
+    c.create_csv()
