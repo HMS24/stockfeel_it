@@ -22,6 +22,9 @@ class Customers:
     customer_mobile: str = ""
     frequency: int = 0
 
+    def __post_init__(self):
+        self.frequency = int(self.frequency)
+
 
 class CsvHanlder:
 
@@ -79,9 +82,7 @@ class CsvHanlder:
         with open(self.file_path, 'r', newline='') as f:
             reader = csv.DictReader(f, delimiter=',')
 
-            frequency_list = [
-                int(Customers(**row).frequency) for row in reader
-            ]
+            frequency_list = [Customers(**row).frequency for row in reader]
 
             # use round(), 假設 frequency 的統計數字可以不用太精準
             mean = round(st.mean(frequency_list), 5)
